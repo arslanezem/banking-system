@@ -1,6 +1,8 @@
 package org.exercise.server;
 
 import com.sun.net.httpserver.HttpServer;
+import org.exercise.model.Message;
+import org.exercise.parsers.JsonParser;
 import org.exercise.server.handlers.RequestHandler;
 
 import java.io.IOException;
@@ -20,7 +22,7 @@ public class BankingServer {
      * @param args Command line arguments (not used).
      * @throws IOException If an I/O error occurs while starting the server.
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         // Create and start the server
         HttpServer server = HttpServer.create(new InetSocketAddress(9090), 0);
         server.createContext("/api/request", new RequestHandler());
@@ -28,5 +30,8 @@ public class BankingServer {
         server.start();
 
         System.out.println("Banking HTTP server started on port 9090");
+
+
+
     }
 }
