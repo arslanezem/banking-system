@@ -8,7 +8,7 @@ import java.io.OutputStream;
 public class RequestHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        // Répond à la requête avec un message simple
+        // Responds to the request with a simple message
         String response = "Hello from the banking system!";
         exchange.sendResponseHeaders(200, response.length());
         OutputStream os = exchange.getResponseBody();
