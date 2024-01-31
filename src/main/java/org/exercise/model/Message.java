@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
-    @JsonProperty("message_type")
+    @JsonProperty("messageType")
     private String messageType;
-    @JsonProperty("account_number")
+    @JsonProperty("accountNumber")
     private int accountNumber;
     @JsonProperty("amount")
     private double amount;

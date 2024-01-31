@@ -1,11 +1,10 @@
-package org.exercise.server.handlers;
+package org.exercise.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 import org.exercise.model.Message;
-import org.exercise.parsers.JsonParser;
+import org.exercise.handlers.interfaces.MessageHandler;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -13,11 +12,6 @@ import java.nio.charset.StandardCharsets;
 public class RequestHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        JsonParser jp = JsonParser.getInstance();
-
-        String requestMethod = exchange.getRequestMethod();
-        String requestUri = exchange.getRequestURI().toString();
-        Headers requestHeaders = exchange.getRequestHeaders();
         InputStream requestBody = exchange.getRequestBody();
 
         InputStreamReader isr = new InputStreamReader(requestBody, StandardCharsets.UTF_8);
@@ -39,13 +33,27 @@ public class RequestHandler implements HttpHandler {
         int accountNumber = message.getAccountNumber();
         double amount = message.getAmount();
 
+        // Delete as it is a repetition
         Message m = new Message(messageType, accountNumber, amount);
 
-        String response = null;
-        try {
-            response = jp.convertObjectToJson(m);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        MessageHandler messageHandler = null;
+        switch (message.getMessageType()) {
+            case "BALANCE":
+                messageHandler = new BalanceRequestHandlerImpl();
+                break;
+            case "WITHDRAW":
+                messageHandler = new WithdrawalRequestHandlerImpl();
+                break;
+            case "DEPOSIT":
+                messageHandler = new DepositRequestHandlerImpl();
+                break;
+        }
+
+        String response = "Invalid message type";
+
+        // Si le handler est trouvé, traite la demande
+        if (messageHandler != null) {
+            response = messageHandler.handleRequest(message);
         }
 
 
