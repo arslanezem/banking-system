@@ -48,15 +48,16 @@ public class RequestHandler implements HttpHandler {
         int statusCode = 200;
         String response = "Invalid message type";
 
-        // Si le handler est trouvé, traite la demande
+        // If correct handler, process the request, else "Invalid message type" is returned with 400 status code
         if (messageHandler != null) {
             response = messageHandler.handleRequest(message);
 
-            if (response.contains("SUCCESS")) {
-                statusCode = 200;  // OK
-            } else if (response.contains("FAIL")) {
+            if (response.contains("FAIL")) {
                 statusCode = 400;  // Bad Request
             }
+        }
+        else {
+            statusCode = 400;  // Bad Request
         }
 
         exchange.sendResponseHeaders(statusCode, response.length());

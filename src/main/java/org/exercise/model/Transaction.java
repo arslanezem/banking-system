@@ -4,11 +4,26 @@ import java.time.LocalDateTime;
 
 public class Transaction {
     // Using the timestamp as an id
+    private int id;
     private LocalDateTime timestamp;
+
+    public Transaction() {
+
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     private String type;  // "DEPOSIT", "WITHDRAWAL", etc.
     private double amount;
 
-    public Transaction(long id, String type, LocalDateTime timestamp, double amount) {
+    public Transaction(int id, String type, LocalDateTime timestamp, double amount) {
+        this.id = id;
         this.type = type;
         this.timestamp = timestamp;
         this.amount = amount;
@@ -36,5 +51,13 @@ public class Transaction {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String toString() {
+        return "Transaction ID: " + id +
+                ", Type: " + type +
+                ", Amount: " + amount +
+                ", Timestamp: " + timestamp;
     }
 }

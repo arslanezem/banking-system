@@ -24,11 +24,13 @@ public class DepositRequestHandlerImpl implements DepositRequestHandler {
             responseMessage.setMessageType("DEPOSIT_SUCCESS");
             responseMessage.setBalance(newBalance);
             responseMessage.setAmount(depositAmount);
+            responseMessage.setStatus("Deposit Request successful.");
+
         } else {
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("DEPOSIT_FAIL");
             responseMessage.setBalance(0);
-            responseMessage.setStatus("Unknown Account Number");
+            responseMessage.setStatus("Unknown Account Number.");
         }
 
         // Convert Object Message to JSON

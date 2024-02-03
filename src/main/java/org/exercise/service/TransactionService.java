@@ -1,6 +1,10 @@
 package org.exercise.service;
 
+import org.exercise.model.Transaction;
+
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,8 +69,8 @@ public class TransactionService {
     }
 
 
-    public static List<String> getTransactionHistoryNew(int accountNumber) {
-        List<String> transactionHistoryList = new ArrayList<>();
+    public static List<Transaction> getTransactionHistoryNew(int accountNumber) {
+        List<Transaction> transactionHistory = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement statement = connection.prepareStatement(
@@ -79,12 +83,25 @@ public class TransactionService {
                     int transactionId = resultSet.getInt("id");
                     String transactionType = resultSet.getString("transactionType");
                     double amount = resultSet.getDouble("amount");
+                    Timestamp timestamp = resultSet.getTimestamp("timestamp");
 
-                    // Ajoute les détails de la transaction à la liste
-                    String transactionDetails = "Transaction ID: " + transactionId +
-                            ", Type: " + transactionType +
-                            ", Amount: " + amount;
-                    transactionHistoryList.add(transactionDetails);
+                    LocalDateTime localDateTime = timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+                    Transaction transaction = new Transaction();
+                    transaction.setId(transactionId);
+                    transaction.setType(transactionType);
+                    transaction.setAmount(amount);
+                    transaction.setTimestamp(localDateTime);
+
+                    transactionHistory.add(transaction);
+
+
+//                    // Ajoute les détails de la transaction à la liste
+//                    String transactionDetails = "Transaction ID: " + transactionId +
+//                            ", Type: " + transactionType +
+//                            ", Amount: " + amount +
+//                            ", Timestamp: " + timestamp;
+//                    transactionHistoryList.add(transactionDetails);
                 }
             }
         } catch (SQLException e) {
@@ -93,7 +110,7 @@ public class TransactionService {
             // Vous pouvez également retourner une liste vide ou lever une exception en cas d'erreur
         }
 
-        return transactionHistoryList;
+        return transactionHistory;
     }
 
 

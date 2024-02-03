@@ -20,12 +20,13 @@ public class BalanceRequestHandlerImpl implements BalanceRequestHandler {
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("BALANCE_SUCCESS");
             responseMessage.setBalance(balance);
+            responseMessage.setStatus("Balance request successful.");
         }
         else {
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("BALANCE_FAIL");
             responseMessage.setBalance(0);
-            responseMessage.setStatus("Unknown Account Number");
+            responseMessage.setStatus("Unknown Account Number.");
         }
 
         // Convert Object Message to JSON

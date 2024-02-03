@@ -3,6 +3,8 @@ package org.exercise.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
@@ -16,12 +18,11 @@ public class Message {
     private double amount;
     @JsonProperty("balance")
     private double balance;
-    @JsonIgnore
     @JsonProperty("transactionHistory")
-    private List<String> transactionHistory;
-
     @JsonIgnore
+    private String transactionHistory;
     @JsonProperty("status")
+    @JsonIgnore
     private String status;
 
 
@@ -67,17 +68,12 @@ public class Message {
         this.balance = balance;
     }
 
-    public List<String> getTransactionHistory() {
+    public String getTransactionHistory() {
         return transactionHistory;
     }
 
-    public void setTransactionHistory(List<String> transactionHistory) {
+    public void setTransactionHistory(String transactionHistory) {
         this.transactionHistory = transactionHistory;
-    }
-
-    // Add a transaction to history
-    public void addTransactionToHistory(String transaction) {
-        this.transactionHistory.add(transaction);
     }
 
     public String getStatus() {
@@ -86,6 +82,16 @@ public class Message {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

@@ -24,26 +24,27 @@ public class WithdrawalRequestHandlerImpl implements WithdrawalRequestHandler {
                     double newBalance = ts.getAccountBalanceByAccountNumber(accountNumber);
                     responseMessage.setAccountNumber(accountNumber);
                     responseMessage.setMessageType("WITHDRAW_SUCCESS");
+                    responseMessage.setStatus(amount + " euros has been withdrawn. Your new balance is: " + newBalance);
                     responseMessage.setBalance(newBalance);
                     responseMessage.setAmount(amount);
                 } else {
                     responseMessage.setAccountNumber(accountNumber);
                     responseMessage.setMessageType("WITHDRAW_FAIL");
-                    responseMessage.setStatus("Amount must be greater than available balance");
+                    responseMessage.setStatus("Amount must be greater than available balance.");
                     responseMessage.setAmount(amount);
                     responseMessage.setAmount(balance);
                 }
             } else{
                 responseMessage.setAccountNumber(accountNumber);
                 responseMessage.setMessageType("WITHDRAW_FAIL");
-                responseMessage.setStatus("Amount must be greater than 0");
+                responseMessage.setStatus("Amount to withdraw must be greater than 0.");
                 responseMessage.setAmount(amount);
             }
         } else {
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("WITHDRAW_FAIL");
             responseMessage.setBalance(0);
-            responseMessage.setStatus("Unknown Account Number");
+            responseMessage.setStatus("Unknown Account Number.");
         }
 
 
