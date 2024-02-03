@@ -9,7 +9,7 @@ public class BalanceRequestHandlerImpl implements BalanceRequestHandler {
     @Override
     public String handleRequest(Message m) {
 
-        TransactionService ts = new TransactionService();
+        TransactionService ts = TransactionService.getInstance();
 
         JsonParser jp = JsonParser.getInstance();
 

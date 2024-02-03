@@ -8,6 +8,22 @@ import static org.exercise.service.DatabaseInitializer.getConnection;
 
 public class TransactionService {
 
+    private static TransactionService instance;
+
+    // Private constructor to prevent instantiation outside the class
+    private TransactionService() {
+        // Optional: Initialize any resources or configurations needed by the service
+    }
+
+    // Method to get the single instance of TransactionService
+    public static synchronized TransactionService getInstance() {
+        if (instance == null) {
+            instance = new TransactionService();
+        }
+        return instance;
+    }
+
+
     public static double getAccountBalanceByAccountNumber(int accountNumber) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password")) {
             String query = "SELECT balance FROM Account WHERE accountNumber = ?";
@@ -30,66 +46,48 @@ public class TransactionService {
 
 
 
-
-
-    public static void processDeposit(int accountNumber, double amount) {
-        try (Connection connection = getConnection();
-             Statement statement = connection.createStatement()) {
+    public static void processDepositNew(int accountNumber, double amount) {
+        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
+             PreparedStatement clientStatement = connection.prepareStatement(
+                     "SELECT * FROM CLIENT WHERE accountNumber = ?");
+             PreparedStatement depositStatement = connection.prepareStatement(
+                     "INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', ?, ?)");
+             PreparedStatement updateBalanceStatement = connection.prepareStatement(
+                     "UPDATE ACCOUNT SET balance = balance + ? WHERE accountNumber = ?")) {
 
             // Vérifie si le client existe
-            ResultSet clientResultSet = statement.executeQuery(
-                    "SELECT * FROM CLIENT WHERE accountNumber = " + accountNumber);
+            clientStatement.setInt(1, accountNumber);
+            try (ResultSet clientResultSet = clientStatement.executeQuery()) {
+                if (clientResultSet.next()) {
+                    // Le client existe, récupère les informations
+                    int clientId = clientResultSet.getInt("id");
+                    String firstName = clientResultSet.getString("firstName");
+                    String lastName = clientResultSet.getString("lastName");
+                    int age = clientResultSet.getInt("age");
 
-            if (clientResultSet.next()) {
-                // Le client existe, récupère les informations
-                int clientId = clientResultSet.getInt("id");
-                String firstName = clientResultSet.getString("firstName");
-                String lastName = clientResultSet.getString("lastName");
-                int age = clientResultSet.getInt("age");
+                    // Insère la transaction associée dans la base de données
+                    depositStatement.setDouble(1, amount);
+                    depositStatement.setInt(2, accountNumber);
+                    depositStatement.executeUpdate();
 
+                    // Met à jour la balance dans la table ACCOUNT
+                    updateBalanceStatement.setDouble(1, amount);
+                    updateBalanceStatement.setInt(2, accountNumber);
+                    updateBalanceStatement.executeUpdate();
 
-                // Crée un objet Client
-                Client client = new Client(clientId, firstName, lastName, age);
-
-                // Insère la transaction associée dans la base de données
-                statement.executeUpdate(
-                        "INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', " + amount + ", " + accountNumber + ")");
-
-                // Affiche l'opération dans les logs
-                System.out.println("Deposit operation for client: " + firstName + " " + lastName + ", Amount: " + amount);
-            } else {
-                // Le client n'existe pas, vous pouvez gérer cette situation en fonction de vos besoins
-                System.out.println("Client with accountNumber " + accountNumber + " does not exist.");
+                    // Affiche l'opération dans les logs
+                    System.out.println("Deposit operation for client: " + firstName + " " + lastName + ", Amount: " + amount);
+                } else {
+                    // Le client n'existe pas, vous pouvez gérer cette situation en fonction de vos besoins
+                    System.out.println("Client with accountNumber " + accountNumber + " does not exist.");
+                }
             }
 
         } catch (SQLException e) {
+            // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
             e.printStackTrace();
         }
     }
 
 
-
-
-
-
-    public static void deposit(Client client, Account account, double amount) {
-
-        // Vérifie si le compte appartient au client
-        if (account.getAccountNumber() == client.getAccountNumber()) {
-            // Effectue le dépôt d'argent
-            double currentBalance = account.getBalance();
-            account.setBalance(currentBalance + amount);
-
-            // Enregistre la transaction dans l'historique du compte (facultatif)
-            //account.addTransaction(new Transaction("DEPOSIT", amount));
-
-            // Affiche les journaux
-            System.out.println("Transaction successful:");
-            System.out.println("Client: " + client.getFirstName() + " " + client.getLastName());
-            System.out.println("Amount deposited: " + amount);
-            System.out.println("New balance: " + account.getBalance());
-        } else {
-            System.out.println("Error: The account does not belong to the client.");
-        }
-    }
 }
