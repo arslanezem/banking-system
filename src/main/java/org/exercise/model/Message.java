@@ -11,14 +11,17 @@ public class Message {
     private int accountNumber;
     @JsonProperty("amount")
     private double amount;
+    @JsonProperty("balance")
+    private double balance;
 
     public Message() {
     }
 
-    public Message(String messageType, int accountNumber, double amount) {
+    public Message(String messageType, int accountNumber, double amount, double balance) {
         this.messageType = messageType;
         this.accountNumber = accountNumber;
         this.amount = amount;
+        this.balance = balance;
     }
 
     public String getMessageType() {
@@ -43,5 +46,13 @@ public class Message {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 }

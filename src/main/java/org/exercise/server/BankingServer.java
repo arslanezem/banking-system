@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.sql.*;
 
+import static org.exercise.service.DatabaseInitializer.getConnection;
+import static org.exercise.service.TransactionService.getAccountBalanceByAccountNumber;
+
 /**
  * The main class for the Banking HTTP server application.
  * This class initializes and starts the HTTP server to handle banking-related requests.
@@ -25,7 +28,7 @@ public class BankingServer {
     public static void main(String[] args) throws Exception {
 
         // Initialize h2 database by creating and inserting into the following tables : Client, Transaction and Account
-        DatabaseInitializer.initializeDatabase();
+        Connection connection = DatabaseInitializer.initializeDatabase();
 
         // Create and start the server
         HttpServer server = HttpServer.create(new InetSocketAddress(9090), 0);
@@ -36,34 +39,28 @@ public class BankingServer {
         System.out.println("Banking HTTP server started on port 9090");
 
         // Display trasactions of all clients
-        displayTransactionsForClients();
+        // displayTransactionsForClients(connection);
 
     }
 
 
+    private static void displayTransactionsForClients(Connection con) {
+        try (
+                //Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
+             Statement statement = con.createStatement()) {
 
+            ResultSet clientResultSet = statement.executeQuery("SELECT * FROM CLIENT");
 
-
-
-
-
-
-
-    private static void displayTransactionsForClients() {
-        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
-             Statement statement = connection.createStatement()) {
-
-            ResultSet clientResultSet = statement.executeQuery("SELECT * FROM Client");
             while (clientResultSet.next()) {
-                int clientId = clientResultSet.getInt("id");
+                int accountNumber = clientResultSet.getInt("accountNumber");
                 String firstName = clientResultSet.getString("firstName");
                 String lastName = clientResultSet.getString("lastName");
 
                 System.out.println("Transactions for client: " + firstName + " " + lastName);
 
                 // Récupère les transactions pour le client spécifié
-                ResultSet transactionResultSet = statement.executeQuery(
-                        "SELECT * FROM Transaction WHERE accountId IN (SELECT id FROM Account WHERE clientId = " + clientId + ")");
+                ResultSet transactionResultSet = con.createStatement().executeQuery(
+                        "SELECT * FROM TRANSACTION WHERE accountNumber IN (SELECT accountNumber FROM ACCOUNT WHERE accountNumber = " + accountNumber + ")");
 
                 // Affiche les transactions
                 while (transactionResultSet.next()) {
@@ -83,6 +80,10 @@ public class BankingServer {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
+
+
     }
 
 

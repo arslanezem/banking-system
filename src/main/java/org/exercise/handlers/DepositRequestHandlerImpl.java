@@ -10,6 +10,9 @@ public class DepositRequestHandlerImpl implements DepositRequestHandler {
 
         JsonParser jp = JsonParser.getInstance();
 
+        double amount = m.getAmount();
+        int accountNumber = m.getAccountNumber();
+
         String response = null;
 
         try {

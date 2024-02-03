@@ -29,13 +29,6 @@ public class RequestHandler implements HttpHandler {
         ObjectMapper objectMapper = new ObjectMapper();
         Message message = objectMapper.readValue(requestBodyString, Message.class);
 
-        String messageType = message.getMessageType();
-        int accountNumber = message.getAccountNumber();
-        double amount = message.getAmount();
-
-        // Delete as it is a repetition
-        Message m = new Message(messageType, accountNumber, amount);
-
         MessageHandler messageHandler = null;
         switch (message.getMessageType()) {
             case "BALANCE":
@@ -55,7 +48,6 @@ public class RequestHandler implements HttpHandler {
         if (messageHandler != null) {
             response = messageHandler.handleRequest(message);
         }
-
 
         exchange.sendResponseHeaders(200, response.length());
         OutputStream os = exchange.getResponseBody();

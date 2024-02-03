@@ -10,7 +10,7 @@ public class Client {
 //    private String phoneNumber;
 //    private String email;
 //    private LocalDate dateOfBirth;
-//    private MaritalStatus maritalStatus; // Enumération
+//    private MaritalStatus maritalStatus; // Enumeration
 
     public Client(int accountNumber, String firstName, String lastName, int age) {
         this.accountNumber = accountNumber;
