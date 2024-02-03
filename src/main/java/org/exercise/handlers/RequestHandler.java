@@ -12,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 public class RequestHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
         InputStream requestBody = exchange.getRequestBody();
 
         InputStreamReader isr = new InputStreamReader(requestBody, StandardCharsets.UTF_8);
@@ -46,18 +47,16 @@ public class RequestHandler implements HttpHandler {
         }
 
         int statusCode = 200;
-        String response = "Invalid message type";
+        String response = "Invalid message type.";
 
         // If correct handler, process the request, else "Invalid message type" is returned with 400 status code
         if (messageHandler != null) {
             response = messageHandler.handleRequest(message);
-
-            if (response.contains("FAIL")) {
-                statusCode = 400;  // Bad Request
-            }
         }
         else {
-            statusCode = 400;  // Bad Request
+            System.out.println("");
+            System.out.println(response);
+            System.out.println("");
         }
 
         exchange.sendResponseHeaders(statusCode, response.length());

@@ -6,6 +6,7 @@ public class Client {
     private String lastName;
     private int age;
 
+    // To be added eventually...
 //    private String address;
 //    private String phoneNumber;
 //    private String email;

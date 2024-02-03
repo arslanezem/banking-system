@@ -1,7 +1,5 @@
 package org.exercise.handlers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.exercise.handlers.interfaces.HistoryRequestHandler;
 import org.exercise.model.Client;
 import org.exercise.model.Message;
@@ -11,7 +9,6 @@ import org.exercise.service.TransactionService;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
     static List<Transaction> transactionHistory;
@@ -83,10 +80,6 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
                 System.out.println("-------------------------------------------");
                 for (Transaction transaction : transactionHistory) {
                     System.out.println("Time: " + transaction.getTimestamp().format(DateTimeFormatter.ofPattern("dd/MM/yyyy, 'at' HH:mm")));
-//
-//                    System.out.println("Time: " + transaction.getTimestamp().getDayOfMonth() + "/" +
-//                            transaction.getTimestamp().getMonthValue() + "/" + transaction.getTimestamp().getYear() +
-//                            ", at " + transaction.getTimestamp().getHour() + ":" + transaction.getTimestamp().getMinute());
                     System.out.println("Type: " + transaction.getType());
                     System.out.println("Amount: " + transaction.getAmount() + " Euros");
                     System.out.println("--------------------------------------------");

@@ -127,9 +127,7 @@ public class TransactionService {
          }
             }
         } catch (SQLException e) {
-            // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
             e.printStackTrace();
-            // Vous pouvez également retourner une liste vide ou lever une exception en cas d'erreur
         }
 
         return transactionHistory;
@@ -151,7 +149,6 @@ public class TransactionService {
                     String transactionType = resultSet.getString("transactionType");
                     double amount = resultSet.getDouble("amount");
 
-                    // Ajoute les détails de la transaction à l'historique
                     transactionHistory.append("Transaction ID: ").append(transactionId)
                             .append(", Type: ").append(transactionType)
                             .append(", Amount: ").append(amount)
@@ -161,7 +158,6 @@ public class TransactionService {
                 return transactionHistory.toString();
             }
         } catch (SQLException e) {
-            // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
             e.printStackTrace();
             return "Error retrieving transaction history.";
         }
@@ -181,18 +177,13 @@ public class TransactionService {
             clientStatement.setInt(1, accountNumber);
             try (ResultSet clientResultSet = clientStatement.executeQuery()) {
                 if (clientResultSet.next()) {
-                    // Le client existe, récupère les informations
-                    int clientId = clientResultSet.getInt("id");
-                    String firstName = clientResultSet.getString("firstName");
-                    String lastName = clientResultSet.getString("lastName");
-                    int age = clientResultSet.getInt("age");
 
-                    // Insère la transaction associée dans la base de données
+                    //
                     withdrawalStatement.setDouble(1, amount);
                     withdrawalStatement.setInt(2, accountNumber);
                     withdrawalStatement.executeUpdate();
 
-                    // Met à jour le solde du compte
+                    //
                     updateBalanceStatement.setDouble(1, amount);
                     updateBalanceStatement.setInt(2, accountNumber);
                     updateBalanceStatement.executeUpdate();
