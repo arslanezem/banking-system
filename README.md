@@ -8,7 +8,8 @@ A minimal user interface is implemented for testing purposes.
 
 <h2>Use Case Diagram</h2>
 The following use case diagram summarizes the possible transactions that can be performed with the banking system.<br>
-<img src="banking-system-usecase.png"></img>
+
+<br><img src="src/banking-system-usecase.png"></img>
 <br>
 
 
@@ -19,35 +20,36 @@ The project consists of several packages:
     <li><b>handlers:</b> Contains classes that handle HTTP requests.</li>
     <li><b>model:</b></li> Defines the data models used in the system, such as Client, Account, Transaction, and Message.
     <li><b>parsers:</b> Provides classes for parsing JSON data.</li>
-    <li><b>server: </b>Contains the main class (BankingServer) that initializes and starts the HTTP server.</li>
-    <li><b>service:</b>Implements services for database initialization (DatabaseInitializer) and transaction handling (TransactionService).</li>
-<li><b>user:</b>Defines the user interface (User) for interacting with the banking system and the Response class for handling server responses.</li>
+    <li><b>server: </b> Contains the main class (BankingServer) that initializes and starts the HTTP server.</li>
+    <li><b>service:</b> Implements services for database initialization (DatabaseInitializer) and transaction handling (TransactionService).</li>
+    <li><b>user:</b> Defines the user interface (User) for interacting with the banking system and the Response class for handling server responses.</li>
 </ul>
 <br>
 
 <h2>Setup and Execution</h2>
-<b>Database Initialization:</b>The H2 in-memory database is used for this project. The DatabaseInitializer class initializes the database with sample data. This is done by creating tables for clients, accounts, and transactions, and then inserting sample data.<br>
-<b>Server Initialization:</b>The main class BankingServer initializes and starts the HTTP server. It listens on port 9090 and handles requests at the "/api/request" endpoint.<br>
-<b>User Interface:</b>The User class represents a simple Swing GUI for users to interact with the banking system. Users can perform actions like deposit, withdrawal, balance inquiry, and transaction history retrieval.<br>
+<b>Database Initialization:</b> The H2 in-memory database is used for this project. The DatabaseInitializer class initializes the database with sample data. This is done by creating tables for clients, accounts, and transactions, and then inserting sample data.<br>
+<b>Server Initialization:</b> The main class BankingServer initializes and starts the HTTP server. It listens on port 9090 and handles requests at the "/api/request" endpoint.<br>
+<b>User Interface:</b> The User class represents a simple Swing GUI for users to interact with the banking system. Users can perform actions like deposit, withdrawal, balance inquiry, and transaction history retrieval.<br>
 <br>
 
 <h2>Database Content</h2>
+<p>To facilitate testing, the following users and transactions have been added to the database:</p>
 <ol>
     <li><b>Client John Doe (Account Number 123):</b>
-        <p>- First Name: John</p>
-        <p>- Last Name: Doe</p>
-        <p>- Age: 30 years</p>
-        <p>- Account Balance: 1000</p>
-        <p>- Transactions:</p>
-        <p>&emsp;&emsp;- Deposit of 500</p>
+        <p>* First Name: John</p>
+        <p>* Last Name: Doe</p>
+        <p>* Age: 30 years</p>
+        <p>* Account Balance: 1000</p>
+        <p>* Transactions:</p>
+        <p>&emsp;&emsp;+ Deposit of 500</p>
         <p>&emsp;&emsp;- Withdrawal of 200</p>
     </li>
     <li><b>User Alice Smith (Account Number 456):</b>
-        <p>- First Name: Alice</p>
-        <p>- Last Name: Smith</p>
-        <p>- Age: 25 years</p>
-        <p>- Account Balance: 500</p>
-        <p>- Transactions: 0 transactions</p>
+        <p>* First Name: Alice</p>
+        <p>* Last Name: Smith</p>
+        <p>* Age: 25 years</p>
+        <p>* Account Balance: 500</p>
+        <p>* Transactions: 0 transactions</p>
     </li>
 </ol>
 
