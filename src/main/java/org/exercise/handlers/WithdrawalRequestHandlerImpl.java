@@ -48,13 +48,13 @@ public class WithdrawalRequestHandlerImpl implements WithdrawalRequestHandler {
             responseMessage.setStatus("Unknown Account Number.");
         }
 
-
         // Convert Object Message to JSON
         String response = null;
         try {
             response = jp.convertObjectToJson(responseMessage);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.err.println("Error during JSON conversion: " + e.getMessage());
+            throw new RuntimeException("Error during JSON conversion", e);
         }
 
         printResponse(responseMessage);
@@ -73,7 +73,6 @@ public class WithdrawalRequestHandlerImpl implements WithdrawalRequestHandler {
             System.out.println("");
         }
         else {
-
             TransactionService ts = TransactionService.getInstance();
             Client client = ts.getClientByAccountNumber(m.getAccountNumber());
 
@@ -100,8 +99,5 @@ public class WithdrawalRequestHandlerImpl implements WithdrawalRequestHandler {
                 System.out.println("");
             }
         }
-
-
     }
-
 }

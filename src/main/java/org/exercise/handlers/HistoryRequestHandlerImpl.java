@@ -21,7 +21,7 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
         int accountNumber = m.getAccountNumber();
 
         if (ts.accountExists(accountNumber)) {
-            transactionHistory = ts.getTransactionHistoryNew(accountNumber);
+            transactionHistory = ts.getTransactionHistory(accountNumber);
 
             double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
 
@@ -42,7 +42,8 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
         try {
             response = jp.convertObjectToJson(responseMessage);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.err.println("Error during JSON conversion: " + e.getMessage());
+            throw new RuntimeException("Error during JSON conversion", e);
         }
 
         printResponse(responseMessage);

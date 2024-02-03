@@ -26,12 +26,10 @@ public class TransactionService {
         return instance;
     }
 
-
     public static boolean accountExists(int accountNumber) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement statement = connection.prepareStatement(
                      "SELECT COUNT(*) FROM CLIENT WHERE accountNumber = ?")) {
-
             statement.setInt(1, accountNumber);
 
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -41,13 +39,12 @@ public class TransactionService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException("Error checking account existence", e);
+
         }
 
         return false;
     }
-
-
 
     public Client getClientByAccountNumber(int accountNumber) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
@@ -67,15 +64,11 @@ public class TransactionService {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException("Error getting client by account number", e);
         }
 
         return null;
     }
-
-
-
-
 
     public static double getAccountBalanceByAccountNumber(int accountNumber) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password")) {
@@ -90,15 +83,14 @@ public class TransactionService {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            handleSQLException("Error getting account balance", e);
         }
 
         // Return 0.0 if the account is not found or an error has occurred
         return 0.0;
     }
 
-
-    public static List<Transaction> getTransactionHistoryNew(int accountNumber) {
+    public static List<Transaction> getTransactionHistory(int accountNumber) {
         List<Transaction> transactionHistory = new ArrayList<>();
 
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
@@ -127,42 +119,11 @@ public class TransactionService {
          }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException("Error getting transaction history", e);
         }
 
         return transactionHistory;
     }
-
-
-    public static String getTransactionHistoryOld(int accountNumber) {
-        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
-             PreparedStatement statement = connection.prepareStatement(
-                     "SELECT * FROM TRANSACTION WHERE accountNumber = ?")) {
-
-            statement.setInt(1, accountNumber);
-
-            try (ResultSet resultSet = statement.executeQuery()) {
-                StringBuilder transactionHistory = new StringBuilder();
-
-                while (resultSet.next()) {
-                    int transactionId = resultSet.getInt("id");
-                    String transactionType = resultSet.getString("transactionType");
-                    double amount = resultSet.getDouble("amount");
-
-                    transactionHistory.append("Transaction ID: ").append(transactionId)
-                            .append(", Type: ").append(transactionType)
-                            .append(", Amount: ").append(amount)
-                            .append("\n");
-                }
-
-                return transactionHistory.toString();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "Error retrieving transaction history.";
-        }
-    }
-
 
     public static void processWithdrawalNew(int accountNumber, double amount) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
@@ -173,32 +134,30 @@ public class TransactionService {
              PreparedStatement updateBalanceStatement = connection.prepareStatement(
                      "UPDATE ACCOUNT SET balance = balance - ? WHERE accountNumber = ?")) {
 
-            // Vérifie si le client existe
+            // Check if client exists (already checked but just in case)
             clientStatement.setInt(1, accountNumber);
             try (ResultSet clientResultSet = clientStatement.executeQuery()) {
                 if (clientResultSet.next()) {
 
-                    //
+                    // Insert the Transaction
                     withdrawalStatement.setDouble(1, amount);
                     withdrawalStatement.setInt(2, accountNumber);
                     withdrawalStatement.executeUpdate();
 
-                    //
+                    // Update Account Balance
                     updateBalanceStatement.setDouble(1, amount);
                     updateBalanceStatement.setInt(2, accountNumber);
                     updateBalanceStatement.executeUpdate();
 
                 } else {
-
                 }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException("Error processing withdrawal", e);
         }
     }
 
-    public static void processDepositNew(int accountNumber, double amount) {
+    public static void processDeposit(int accountNumber, double amount) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement clientStatement = connection.prepareStatement(
                      "SELECT * FROM CLIENT WHERE accountNumber = ?");
@@ -207,34 +166,30 @@ public class TransactionService {
              PreparedStatement updateBalanceStatement = connection.prepareStatement(
                      "UPDATE ACCOUNT SET balance = balance + ? WHERE accountNumber = ?")) {
 
-            // Vérifie si le client existe
+            // Check if client exists (already checked but just in case)
             clientStatement.setInt(1, accountNumber);
             try (ResultSet clientResultSet = clientStatement.executeQuery()) {
                 if (clientResultSet.next()) {
-                    // Le client existe, récupère les informations
-                    int clientId = clientResultSet.getInt("id");
-                    String firstName = clientResultSet.getString("firstName");
-                    String lastName = clientResultSet.getString("lastName");
-                    int age = clientResultSet.getInt("age");
 
-                    // Insère la transaction associée dans la base de données
+                    // Insert the Transaction in the database
                     depositStatement.setDouble(1, amount);
                     depositStatement.setInt(2, accountNumber);
                     depositStatement.executeUpdate();
 
-                    // Met à jour la balance dans la table ACCOUNT
+                    // Update the balance of the Account
                     updateBalanceStatement.setDouble(1, amount);
                     updateBalanceStatement.setInt(2, accountNumber);
                     updateBalanceStatement.executeUpdate();
                 } else {
-
                 }
             }
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            handleSQLException("Error processing deposit", e);
         }
     }
 
-
+    private static void handleSQLException(String message, SQLException e) {
+        System.err.println(message + ": " + e.getMessage());
+        throw new RuntimeException(message, e);
+    }
 }

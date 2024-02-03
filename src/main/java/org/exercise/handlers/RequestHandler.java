@@ -49,7 +49,7 @@ public class RequestHandler implements HttpHandler {
         int statusCode = 200;
         String response = "Invalid message type.";
 
-        // If correct handler, process the request, else "Invalid message type" is returned with 400 status code
+        // If correct handler, process the request, else "Invalid message type" is returned
         if (messageHandler != null) {
             response = messageHandler.handleRequest(message);
         }

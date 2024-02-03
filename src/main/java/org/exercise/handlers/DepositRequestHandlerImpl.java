@@ -17,7 +17,7 @@ public class DepositRequestHandlerImpl implements DepositRequestHandler {
         double depositAmount = m.getAmount();
 
         if (ts.accountExists(accountNumber)) {
-            ts.processDepositNew(accountNumber, depositAmount);
+            ts.processDeposit(accountNumber, depositAmount);
 
             double newBalance = ts.getAccountBalanceByAccountNumber(accountNumber);
 
@@ -39,7 +39,8 @@ public class DepositRequestHandlerImpl implements DepositRequestHandler {
         try {
             response = jp.convertObjectToJson(responseMessage);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.err.println("Error during JSON conversion: " + e.getMessage());
+            throw new RuntimeException("Error during JSON conversion", e);
         }
 
         printResponse(responseMessage);

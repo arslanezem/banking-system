@@ -30,47 +30,57 @@ public class DatabaseInitializer {
     }
 
     private static void createTables(Statement statement) throws SQLException {
-        // Create Client table
-        statement.executeUpdate("DROP TABLE IF EXISTS CLIENT");
-        statement.executeUpdate("CREATE TABLE CLIENT " +
-                "(id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "accountNumber INT, " +
-                "firstName VARCHAR(255), " +
-                "lastName VARCHAR(255), " +
-                "age INT)");
+        try {
+            // Create Client table
+            statement.executeUpdate("DROP TABLE IF EXISTS CLIENT");
+            statement.executeUpdate("CREATE TABLE CLIENT " +
+                    "(id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "accountNumber INT, " +
+                    "firstName VARCHAR(255), " +
+                    "lastName VARCHAR(255), " +
+                    "age INT)");
 
-        // Create Account table
-        statement.executeUpdate("DROP TABLE IF EXISTS ACCOUNT");
-        statement.executeUpdate("CREATE TABLE ACCOUNT " +
-                "(accountNumber INT PRIMARY KEY, " +
-                "balance INT)");
+            // Create Account table
+            statement.executeUpdate("DROP TABLE IF EXISTS ACCOUNT");
+            statement.executeUpdate("CREATE TABLE ACCOUNT " +
+                    "(accountNumber INT PRIMARY KEY, " +
+                    "balance INT)");
 
-        // Create Transaction table
-        statement.executeUpdate("DROP TABLE IF EXISTS TRANSACTION");
-        statement.executeUpdate("CREATE TABLE TRANSACTION " +
-                "(id INT AUTO_INCREMENT PRIMARY KEY, " +
-                "transactionType VARCHAR(255), " +
-                "amount INT, " +
-                "accountNumber INT, " +
-                "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                "FOREIGN KEY (accountNumber) REFERENCES ACCOUNT(accountNumber))");
+            // Create Transaction table
+            statement.executeUpdate("DROP TABLE IF EXISTS TRANSACTION");
+            statement.executeUpdate("CREATE TABLE TRANSACTION " +
+                    "(id INT AUTO_INCREMENT PRIMARY KEY, " +
+                    "transactionType VARCHAR(255), " +
+                    "amount INT, " +
+                    "accountNumber INT, " +
+                    "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                    "FOREIGN KEY (accountNumber) REFERENCES ACCOUNT(accountNumber))");
+        } catch (SQLException e) {
+            System.err.println("Error creating tables: " + e.getMessage());
+            throw e; // Rethrow the exception to indicate failure
+        }
     }
 
     private static void insertSampleData(Statement statement) throws SQLException {
-        // Insertion de clients
-        statement.executeUpdate("INSERT INTO CLIENT " +
-                "(accountNumber, firstName, lastName, age) VALUES " +
-                "(123, 'John', 'Doe', 30)");
-        statement.executeUpdate("INSERT INTO CLIENT " +
-                "(accountNumber, firstName, lastName, age) VALUES " +
-                "(456, 'Alice', 'Smith', 25)");
+        try {
+            // Insertion de clients
+            statement.executeUpdate("INSERT INTO CLIENT " +
+                    "(accountNumber, firstName, lastName, age) VALUES " +
+                    "(123, 'John', 'Doe', 30)");
+            statement.executeUpdate("INSERT INTO CLIENT " +
+                    "(accountNumber, firstName, lastName, age) VALUES " +
+                    "(456, 'Alice', 'Smith', 25)");
 
-        // Inserting Accounts for corresponding clients
-        statement.executeUpdate("INSERT INTO ACCOUNT (accountNumber, balance) VALUES (123, 1000)");
-        statement.executeUpdate("INSERT INTO ACCOUNT (accountNumber, balance) VALUES (456, 500)");
+            // Inserting Accounts for corresponding clients
+            statement.executeUpdate("INSERT INTO ACCOUNT (accountNumber, balance) VALUES (123, 1000)");
+            statement.executeUpdate("INSERT INTO ACCOUNT (accountNumber, balance) VALUES (456, 500)");
 
-        // Inserting Transactions for corresponding accounts
-        statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', 500, 123)");
-        statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('WITHDRAWAL', 200, 123)");
+            // Inserting Transactions for corresponding accounts
+            statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', 500, 123)");
+            statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('WITHDRAWAL', 200, 123)");
+        }catch (SQLException e) {
+            System.err.println("Error inserting sample data: " + e.getMessage());
+            throw e;
+        }
     }
 }

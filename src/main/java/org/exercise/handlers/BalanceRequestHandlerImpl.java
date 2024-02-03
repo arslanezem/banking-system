@@ -6,7 +6,19 @@ import org.exercise.model.Message;
 import org.exercise.parsers.JsonParser;
 import org.exercise.service.TransactionService;
 
+/**
+ * Implementation of the {@link BalanceRequestHandler} interface for handling balance requests.
+ * This class provides the logic for processing balance requests and generating appropriate responses.
+ */
 public class BalanceRequestHandlerImpl implements BalanceRequestHandler {
+
+    /**
+     * Handles a balance request and generates an appropriate response.
+     *
+     * @param m The {@link Message} representing the balance request.
+     * @return The JSON-formatted response message.
+     * @throws RuntimeException If there is an error during JSON conversion.
+     */
     @Override
     public String handleRequest(Message m) {
         TransactionService ts = TransactionService.getInstance();
@@ -15,6 +27,7 @@ public class BalanceRequestHandlerImpl implements BalanceRequestHandler {
         Message responseMessage = new Message();
         int accountNumber = m.getAccountNumber();
 
+        // Check if the account exists
         if (ts.accountExists(accountNumber)) {
             double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
 
@@ -35,14 +48,21 @@ public class BalanceRequestHandlerImpl implements BalanceRequestHandler {
         try {
             response = jp.convertObjectToJson(responseMessage);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.err.println("Error during JSON conversion: " + e.getMessage());
+            throw new RuntimeException("Error during JSON conversion", e);
         }
 
+        // Print the response details
         printResponse(responseMessage);
 
         return response;
     }
 
+    /**
+     * Prints the details of the balance response to the console.
+     *
+     * @param m The {@link Message} representing the balance response.
+     */
     @Override
     public void printResponse(Message m) {
         System.out.println("Balance Request:");

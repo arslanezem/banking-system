@@ -11,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
@@ -91,11 +90,9 @@ public class User extends JFrame {
     }
 
     private void sendRequest(String action) {
-        // Implement your logic to send HTTP requests and display the response
         String accountNumber = accountNumberField.getText();
         String amount = amountField.getText();
 
-        // Construct your HTTP request and handle the response
         String response = sendHttpRequest(action, accountNumber, amount);
 
         // Display the response in the JTextArea
@@ -111,11 +108,6 @@ public class User extends JFrame {
         });
     }
 
-
-
-
-
-
     private String sendHttpRequest(String action, String accountNumber, String amount) {
         try {
             String urlString = "http://localhost:9090/api/request";
@@ -126,7 +118,7 @@ public class User extends JFrame {
             connection.setRequestProperty("Content-Type", "application/json");
             connection.setDoOutput(true);
 
-            // Construisez le corps de la requête JSON
+            // Json request body
             String jsonInputString = "{\"accountNumber\": \"" + accountNumber + "\", \"amount\": \"" + amount + "\", \"messageType\": \"" + action + "\"}";
 
             try (OutputStream os = connection.getOutputStream()) {
@@ -175,7 +167,6 @@ public class User extends JFrame {
             default:
                 return "Unknown message type";
         }
-
     }
 
     public static JsonNode parseJson(String jsonString) {
