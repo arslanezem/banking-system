@@ -60,11 +60,9 @@ public class TransactionService {
             throw new RuntimeException(e);
         }
 
-        // Return 0.0 if the account is not found or an error has occured
+        // Return 0.0 if the account is not found or an error has occurred
         return 0.0;
     }
-
-
 
 
     public static List<String> getTransactionHistoryNew(int accountNumber) {
@@ -99,9 +97,6 @@ public class TransactionService {
     }
 
 
-
-
-
     public static String getTransactionHistoryOld(int accountNumber) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement statement = connection.prepareStatement(
@@ -132,8 +127,6 @@ public class TransactionService {
             return "Error retrieving transaction history.";
         }
     }
-
-
 
 
     public static void processWithdrawalNew(int accountNumber, double amount) {
@@ -179,9 +172,6 @@ public class TransactionService {
         }
     }
 
-
-
-
     public static void processDepositNew(int accountNumber, double amount) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement clientStatement = connection.prepareStatement(
@@ -220,7 +210,6 @@ public class TransactionService {
             }
 
         } catch (SQLException e) {
-            // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
             e.printStackTrace();
         }
     }

@@ -8,31 +8,30 @@ import org.exercise.service.TransactionService;
 public class DepositRequestHandlerImpl implements DepositRequestHandler {
     @Override
     public String handleRequest(Message m) {
-
-        // Créer une instance de TransactionService
         TransactionService ts = TransactionService.getInstance();
-
-        // Créer une instance de JsonParser
         JsonParser jp = JsonParser.getInstance();
 
-        // Récupérer le montant du dépôt et le numéro de compte depuis le message
-        double depositAmount = m.getAmount();
-        int accountNumber = m.getAccountNumber();
-
-        // Exécuter la logique du dépôt (ajouter le montant au solde du compte)
-        ts.processDepositNew(accountNumber, depositAmount);
-
-        double newBalance = ts.getAccountBalanceByAccountNumber(accountNumber);
-
         Message responseMessage = new Message();
-        responseMessage.setAccountNumber(accountNumber);
-        responseMessage.setMessageType("DEPOSIT_RESPONSE");
-        responseMessage.setBalance(newBalance);
-        responseMessage.setAmount(depositAmount);
+        int accountNumber = m.getAccountNumber();
+        double depositAmount = m.getAmount();
 
+        if (ts.accountExists(accountNumber)) {
+            ts.processDepositNew(accountNumber, depositAmount);
 
+            double newBalance = ts.getAccountBalanceByAccountNumber(accountNumber);
 
-        // Convertir l'objet Message en JSON
+            responseMessage.setAccountNumber(accountNumber);
+            responseMessage.setMessageType("DEPOSIT_SUCCESS");
+            responseMessage.setBalance(newBalance);
+            responseMessage.setAmount(depositAmount);
+        } else {
+            responseMessage.setAccountNumber(accountNumber);
+            responseMessage.setMessageType("DEPOSIT_FAIL");
+            responseMessage.setBalance(0);
+            responseMessage.setStatus("Unknown Account Number");
+        }
+
+        // Convert Object Message to JSON
         String response = null;
         try {
             response = jp.convertObjectToJson(responseMessage);
@@ -40,7 +39,6 @@ public class DepositRequestHandlerImpl implements DepositRequestHandler {
             throw new RuntimeException(e);
         }
 
-        // Retourner la réponse JSON
         return response;
     }
 }
