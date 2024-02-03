@@ -3,6 +3,8 @@ package org.exercise.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
     @JsonProperty("messageType")
@@ -13,6 +15,8 @@ public class Message {
     private double amount;
     @JsonProperty("balance")
     private double balance;
+    @JsonProperty("transactionHistory")
+    private List<String> transactionHistory;
 
     public Message() {
     }
@@ -55,4 +59,18 @@ public class Message {
     public void setBalance(double balance) {
         this.balance = balance;
     }
+
+    public List<String> getTransactionHistory() {
+        return transactionHistory;
+    }
+
+    public void setTransactionHistory(List<String> transactionHistory) {
+        this.transactionHistory = transactionHistory;
+    }
+
+    // Ajoute une transaction à l'historique
+    public void addTransactionToHistory(String transaction) {
+        this.transactionHistory.add(transaction);
+    }
+
 }

@@ -3,6 +3,8 @@ package org.exercise.service;
 import org.exercise.model.Account;
 import org.exercise.model.Client;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.exercise.service.DatabaseInitializer.getConnection;
 
@@ -43,6 +45,76 @@ public class TransactionService {
         // Retourne 0.0 si le compte n'est pas trouvé ou s'il y a une erreur
         return 0.0;
     }
+
+
+
+
+    public static List<String> getTransactionHistoryNew(int accountNumber) {
+        List<String> transactionHistoryList = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT * FROM TRANSACTION WHERE accountNumber = ?")) {
+
+            statement.setInt(1, accountNumber);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    int transactionId = resultSet.getInt("id");
+                    String transactionType = resultSet.getString("transactionType");
+                    double amount = resultSet.getDouble("amount");
+
+                    // Ajoute les détails de la transaction à la liste
+                    String transactionDetails = "Transaction ID: " + transactionId +
+                            ", Type: " + transactionType +
+                            ", Amount: " + amount;
+                    transactionHistoryList.add(transactionDetails);
+                }
+            }
+        } catch (SQLException e) {
+            // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
+            e.printStackTrace();
+            // Vous pouvez également retourner une liste vide ou lever une exception en cas d'erreur
+        }
+
+        return transactionHistoryList;
+    }
+
+
+
+
+
+    public static String getTransactionHistoryOld(int accountNumber) {
+        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT * FROM TRANSACTION WHERE accountNumber = ?")) {
+
+            statement.setInt(1, accountNumber);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                StringBuilder transactionHistory = new StringBuilder();
+
+                while (resultSet.next()) {
+                    int transactionId = resultSet.getInt("id");
+                    String transactionType = resultSet.getString("transactionType");
+                    double amount = resultSet.getDouble("amount");
+
+                    // Ajoute les détails de la transaction à l'historique
+                    transactionHistory.append("Transaction ID: ").append(transactionId)
+                            .append(", Type: ").append(transactionType)
+                            .append(", Amount: ").append(amount)
+                            .append("\n");
+                }
+
+                return transactionHistory.toString();
+            }
+        } catch (SQLException e) {
+            // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
+            e.printStackTrace();
+            return "Error retrieving transaction history.";
+        }
+    }
+
 
 
 

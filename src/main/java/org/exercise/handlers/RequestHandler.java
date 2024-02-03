@@ -37,6 +37,9 @@ public class RequestHandler implements HttpHandler {
             case "WITHDRAW":
                 messageHandler = new WithdrawalRequestHandlerImpl();
                 break;
+            case "HISTORY":
+                messageHandler = new HistoryRequestHandlerImpl();
+                break;
             case "DEPOSIT":
                 messageHandler = new DepositRequestHandlerImpl();
                 break;
