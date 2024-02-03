@@ -72,6 +72,6 @@ public class DatabaseInitializer {
         // Inserting Transactions for corresponding accounts
         statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', 500, 123)");
         statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('WITHDRAWAL', 200, 123)");
-        statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', 300, 456)");
+        //statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', 300, 456)");
     }
 }

@@ -10,41 +10,31 @@ import java.util.List;
 public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
     @Override
     public String handleRequest(Message m) {
-        JsonParser jp = JsonParser.getInstance();
         TransactionService ts = TransactionService.getInstance();
+        JsonParser jp = JsonParser.getInstance();
 
+        Message responseMessage = new Message();
         int accountNumber = m.getAccountNumber();
 
-        // Récupère l'historique des transactions
-        List<String> transactionHistory = ts.getTransactionHistoryNew(accountNumber);
+        if (ts.accountExists(accountNumber)) {
+            List<String> transactionHistory = ts.getTransactionHistoryNew(accountNumber);
+            double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
+            if (transactionHistory.isEmpty()) {
+                responseMessage.setStatus("No transactions found");
+            }
+            responseMessage.setAccountNumber(accountNumber);
+            responseMessage.setMessageType("HISTORY_SUCCESS");
+            responseMessage.setBalance(balance);
+            responseMessage.setTransactionHistory(transactionHistory);
+        } else {
+            responseMessage.setAccountNumber(accountNumber);
+            responseMessage.setMessageType("HISTORY_FAIL");
+            responseMessage.setBalance(0);
+            responseMessage.setStatus("Unknown Account Number");
+        }
 
-        System.out.println(transactionHistory.toString());
-
-        //transactionHistory.add(transactionHistory);
-
-        double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
-
-        // Crée un nouveau message pour la réponse
-        Message responseMessage = new Message();
-        responseMessage.setMessageType("HISTORY_RESPONSE");
-        responseMessage.setAccountNumber(accountNumber);
-        responseMessage.setTransactionHistory(transactionHistory);
-
-//        for (String transaction : transactionHistory) {
-//            responseMessage.addTransactionToHistory(transaction);
-//        }
-
-        responseMessage.setBalance(balance);
-
-
-        // Convertir l'objet Message en JSON
+        // Convert Object Message to JSON
         String response = null;
-
-//        for (String transaction : transactionHistory) {
-//            responseMessage.addTransactionToHistory(transaction);
-//        }
-
-
         try {
             response = jp.convertObjectToJson(responseMessage);
         } catch (Exception e) {
