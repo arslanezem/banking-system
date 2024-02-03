@@ -3,14 +3,18 @@ package org.exercise.handlers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.exercise.handlers.interfaces.HistoryRequestHandler;
+import org.exercise.model.Client;
 import org.exercise.model.Message;
 import org.exercise.model.Transaction;
 import org.exercise.parsers.JsonParser;
 import org.exercise.service.TransactionService;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
+    static List<Transaction> transactionHistory;
     @Override
     public String handleRequest(Message m) {
         TransactionService ts = TransactionService.getInstance();
@@ -20,19 +24,10 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
         int accountNumber = m.getAccountNumber();
 
         if (ts.accountExists(accountNumber)) {
-            List<Transaction> transactionHistory = ts.getTransactionHistoryNew(accountNumber);
-
-            for (Transaction transaction : transactionHistory) {
-                System.out.println(transaction.getId());
-                System.out.println(transaction.getAmount());
-                System.out.println(transaction.getTimestamp());
-                System.out.println(transaction.getType());
-            }
+            transactionHistory = ts.getTransactionHistoryNew(accountNumber);
 
             double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
-            if (transactionHistory.isEmpty()) {
-                responseMessage.setStatus("No transactions found.");
-            }
+
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("HISTORY_SUCCESS");
             responseMessage.setBalance(balance);
@@ -53,6 +48,52 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
             throw new RuntimeException(e);
         }
 
+        printResponse(responseMessage);
+
         return response;
+    }
+
+    @Override
+    public void printResponse(Message m) {
+        System.out.println("Transaction History:");
+
+        if(m.getStatus().equals("Unknown Account Number.")) {
+            System.out.println("-------------------------------------------");
+            System.out.println("There are no accounts associated with the number account you entered: " + m.getAccountNumber() + ".");
+            System.out.println("-------------------------------------------");
+            System.out.println("");
+        }
+        else {
+            TransactionService ts = TransactionService.getInstance();
+            Client client = ts.getClientByAccountNumber(m.getAccountNumber());
+
+            System.out.println("-------------------------------------------");
+            System.out.println("Client Details:");
+            System.out.println("Name: " + client.getFirstName() + " " + client.getLastName());
+            System.out.println("Account Number: " + client.getAccountNumber());
+            System.out.println("Age: " + client.getAge());
+            System.out.println("-------------------------------------------");
+
+            if (m.getStatus().equals("0 transactions found.")) {
+                System.out.println("There are no transactions made in this account.");
+                System.out.println("-------------------------------------------");
+                System.out.println("");
+            } else {
+                System.out.println(transactionHistory.size() +" transactions to display.");
+                System.out.println("-------------------------------------------");
+                for (Transaction transaction : transactionHistory) {
+                    System.out.println("Time: " + transaction.getTimestamp().format(DateTimeFormatter.ofPattern("dd/MM/yyyy, 'at' HH:mm")));
+//
+//                    System.out.println("Time: " + transaction.getTimestamp().getDayOfMonth() + "/" +
+//                            transaction.getTimestamp().getMonthValue() + "/" + transaction.getTimestamp().getYear() +
+//                            ", at " + transaction.getTimestamp().getHour() + ":" + transaction.getTimestamp().getMinute());
+                    System.out.println("Type: " + transaction.getType());
+                    System.out.println("Amount: " + transaction.getAmount() + " Euros");
+                    System.out.println("--------------------------------------------");
+                }
+                System.out.println("");
+            }
+        }
+
     }
 }

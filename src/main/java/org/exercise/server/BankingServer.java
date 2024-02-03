@@ -33,5 +33,8 @@ public class BankingServer {
         server.start();
 
         System.out.println("Banking HTTP server started on port 9090");
+        System.out.println("");
+        System.out.println("");
+
     }
 }

@@ -3,12 +3,10 @@ package org.exercise.model;
 import java.time.LocalDateTime;
 
 public class Transaction {
-    // Using the timestamp as an id
     private int id;
     private LocalDateTime timestamp;
 
     public Transaction() {
-
     }
 
     public int getId() {

@@ -1,5 +1,6 @@
 package org.exercise.service;
 
+import org.exercise.model.Client;
 import org.exercise.model.Transaction;
 
 import java.sql.*;
@@ -45,6 +46,34 @@ public class TransactionService {
 
         return false;
     }
+
+
+
+    public Client getClientByAccountNumber(int accountNumber) {
+        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT * FROM CLIENT WHERE accountNumber = ?")) {
+
+            statement.setInt(1, accountNumber);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int clientId = resultSet.getInt("id");
+                    String firstName = resultSet.getString("firstName");
+                    String lastName = resultSet.getString("lastName");
+                    int age = Integer.parseInt(resultSet.getString("age"));
+
+                    return new Client(accountNumber, firstName, lastName, age);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
 
 
 
@@ -95,14 +124,7 @@ public class TransactionService {
 
                     transactionHistory.add(transaction);
 
-
-//                    // Ajoute les détails de la transaction à la liste
-//                    String transactionDetails = "Transaction ID: " + transactionId +
-//                            ", Type: " + transactionType +
-//                            ", Amount: " + amount +
-//                            ", Timestamp: " + timestamp;
-//                    transactionHistoryList.add(transactionDetails);
-                }
+         }
             }
         } catch (SQLException e) {
             // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
@@ -175,16 +197,12 @@ public class TransactionService {
                     updateBalanceStatement.setInt(2, accountNumber);
                     updateBalanceStatement.executeUpdate();
 
-                    // Affiche l'opération dans les logs
-                    System.out.println("Withdrawal operation for client: " + firstName + " " + lastName + ", Amount: " + amount);
                 } else {
-                    // Le client n'existe pas, vous pouvez gérer cette situation en fonction de vos besoins
-                    System.out.println("Client with accountNumber " + accountNumber + " does not exist.");
+
                 }
             }
 
         } catch (SQLException e) {
-            // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
             e.printStackTrace();
         }
     }
@@ -217,12 +235,8 @@ public class TransactionService {
                     updateBalanceStatement.setDouble(1, amount);
                     updateBalanceStatement.setInt(2, accountNumber);
                     updateBalanceStatement.executeUpdate();
-
-                    // Affiche l'opération dans les logs
-                    System.out.println("Deposit operation for client: " + firstName + " " + lastName + ", Amount: " + amount);
                 } else {
-                    // Le client n'existe pas, vous pouvez gérer cette situation en fonction de vos besoins
-                    System.out.println("Client with accountNumber " + accountNumber + " does not exist.");
+
                 }
             }
 
