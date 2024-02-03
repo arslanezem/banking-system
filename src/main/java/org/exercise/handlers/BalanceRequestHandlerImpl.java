@@ -8,19 +8,25 @@ import org.exercise.service.TransactionService;
 public class BalanceRequestHandlerImpl implements BalanceRequestHandler {
     @Override
     public String handleRequest(Message m) {
-
         TransactionService ts = TransactionService.getInstance();
-
         JsonParser jp = JsonParser.getInstance();
 
+        Message responseMessage = new Message();
         int accountNumber = m.getAccountNumber();
 
-        double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
+        if (ts.accountExists(accountNumber)) {
+            double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
 
-        Message responseMessage = new Message();
-        responseMessage.setAccountNumber(accountNumber);
-        responseMessage.setMessageType("BALANCE RESPONSE");
-        responseMessage.setBalance(balance);
+            responseMessage.setAccountNumber(accountNumber);
+            responseMessage.setMessageType("BALANCE_SUCCESS");
+            responseMessage.setBalance(balance);
+        }
+        else {
+            responseMessage.setAccountNumber(accountNumber);
+            responseMessage.setMessageType("BALANCE_FAIL");
+            responseMessage.setBalance(0);
+            responseMessage.setStatus("Unknown Account Number");
+        }
 
         // Convert Object Message to JSON
         String response = null;

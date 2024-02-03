@@ -1,6 +1,5 @@
 package org.exercise.handlers;
 
-import org.exercise.handlers.interfaces.DepositRequestHandler;
 import org.exercise.handlers.interfaces.HistoryRequestHandler;
 import org.exercise.model.Message;
 import org.exercise.parsers.JsonParser;
@@ -20,9 +19,6 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
         List<String> transactionHistory = ts.getTransactionHistoryNew(accountNumber);
 
         System.out.println(transactionHistory.toString());
-
-
-
 
         //transactionHistory.add(transactionHistory);
 

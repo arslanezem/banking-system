@@ -1,7 +1,6 @@
 package org.exercise.parsers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.exercise.model.Message;
 
 public class JsonParser {
     private static JsonParser instance;

@@ -1,12 +1,9 @@
 package org.exercise.service;
 
-import org.exercise.model.Account;
-import org.exercise.model.Client;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.exercise.service.DatabaseInitializer.getConnection;
 
 public class TransactionService {
 
@@ -14,7 +11,6 @@ public class TransactionService {
 
     // Private constructor to prevent instantiation outside the class
     private TransactionService() {
-        // Optional: Initialize any resources or configurations needed by the service
     }
 
     // Method to get the single instance of TransactionService
@@ -24,6 +20,28 @@ public class TransactionService {
         }
         return instance;
     }
+
+
+    public static boolean accountExists(int accountNumber) {
+        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT COUNT(*) FROM CLIENT WHERE accountNumber = ?")) {
+
+            statement.setInt(1, accountNumber);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    int count = resultSet.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
 
     public static double getAccountBalanceByAccountNumber(int accountNumber) {
@@ -42,7 +60,7 @@ public class TransactionService {
             throw new RuntimeException(e);
         }
 
-        // Retourne 0.0 si le compte n'est pas trouvé ou s'il y a une erreur
+        // Return 0.0 if the account is not found or an error has occured
         return 0.0;
     }
 

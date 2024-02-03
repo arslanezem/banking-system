@@ -1,5 +1,6 @@
 package org.exercise.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,8 +16,14 @@ public class Message {
     private double amount;
     @JsonProperty("balance")
     private double balance;
+    @JsonIgnore
     @JsonProperty("transactionHistory")
     private List<String> transactionHistory;
+
+    @JsonIgnore
+    @JsonProperty("status")
+    private String status;
+
 
     public Message() {
     }
@@ -68,9 +75,17 @@ public class Message {
         this.transactionHistory = transactionHistory;
     }
 
-    // Ajoute une transaction à l'historique
+    // Add a transaction to history
     public void addTransactionToHistory(String transaction) {
         this.transactionHistory.add(transaction);
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
 }
