@@ -18,7 +18,7 @@ The following use case diagram summarizes the possible transactions that can be 
 The project consists of several packages:
 <ul>
     <li><b>handlers:</b> Contains classes that handle HTTP requests.</li>
-    <li><b>model:</b></li> Defines the data models used in the system, such as Client, Account, Transaction, and Message.
+    <li><b>model:</b> Defines the data models used in the system, such as Client, Account, Transaction, and Message.</li>
     <li><b>parsers:</b> Provides classes for parsing JSON data.</li>
     <li><b>server: </b> Contains the main class (BankingServer) that initializes and starts the HTTP server.</li>
     <li><b>service:</b> Implements services for database initialization (DatabaseInitializer) and transaction handling (TransactionService).</li>
@@ -28,8 +28,8 @@ The project consists of several packages:
 
 <h2>Setup and Execution</h2>
 <b>Database Initialization:</b> The H2 in-memory database is used for this project. The DatabaseInitializer class initializes the database with sample data. This is done by creating tables for clients, accounts, and transactions, and then inserting sample data.<br>
-<b>Server Initialization:</b> The main class BankingServer initializes and starts the HTTP server. It listens on port 9090 and handles requests at the "/api/request" endpoint.<br>
-<b>User Interface:</b> The User class represents a simple Swing GUI for users to interact with the banking system. Users can perform actions like deposit, withdrawal, balance inquiry, and transaction history retrieval.<br>
+<br><b>Server Initialization:</b> The main class BankingServer initializes and starts the HTTP server. It listens on port 9090 and handles requests at the "/api/request" endpoint.<br>
+<br><b>User Interface:</b> The User class represents a simple Swing GUI for users to interact with the banking system. Users can perform actions like deposit, withdrawal, balance inquiry, and transaction history retrieval.<br>
 <br>
 
 <h2>Database Content</h2>
