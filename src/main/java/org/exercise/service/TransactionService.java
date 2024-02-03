@@ -46,6 +46,52 @@ public class TransactionService {
 
 
 
+    public static void processWithdrawalNew(int accountNumber, double amount) {
+        try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
+             PreparedStatement clientStatement = connection.prepareStatement(
+                     "SELECT * FROM CLIENT WHERE accountNumber = ?");
+             PreparedStatement withdrawalStatement = connection.prepareStatement(
+                     "INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('WITHDRAWAL', ?, ?)");
+             PreparedStatement updateBalanceStatement = connection.prepareStatement(
+                     "UPDATE ACCOUNT SET balance = balance - ? WHERE accountNumber = ?")) {
+
+            // Vérifie si le client existe
+            clientStatement.setInt(1, accountNumber);
+            try (ResultSet clientResultSet = clientStatement.executeQuery()) {
+                if (clientResultSet.next()) {
+                    // Le client existe, récupère les informations
+                    int clientId = clientResultSet.getInt("id");
+                    String firstName = clientResultSet.getString("firstName");
+                    String lastName = clientResultSet.getString("lastName");
+                    int age = clientResultSet.getInt("age");
+
+                    // Insère la transaction associée dans la base de données
+                    withdrawalStatement.setDouble(1, amount);
+                    withdrawalStatement.setInt(2, accountNumber);
+                    withdrawalStatement.executeUpdate();
+
+                    // Met à jour le solde du compte
+                    updateBalanceStatement.setDouble(1, amount);
+                    updateBalanceStatement.setInt(2, accountNumber);
+                    updateBalanceStatement.executeUpdate();
+
+                    // Affiche l'opération dans les logs
+                    System.out.println("Withdrawal operation for client: " + firstName + " " + lastName + ", Amount: " + amount);
+                } else {
+                    // Le client n'existe pas, vous pouvez gérer cette situation en fonction de vos besoins
+                    System.out.println("Client with accountNumber " + accountNumber + " does not exist.");
+                }
+            }
+
+        } catch (SQLException e) {
+            // Gestion des erreurs : logger ou remonter l'exception, évitez simplement e.printStackTrace()
+            e.printStackTrace();
+        }
+    }
+
+
+
+
     public static void processDepositNew(int accountNumber, double amount) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement clientStatement = connection.prepareStatement(
