@@ -8,6 +8,15 @@ import java.time.LocalDateTime;
 public class Transaction {
     private int id;
     private LocalDateTime timestamp;
+    private int newBalance;
+
+    public int getNewBalance() {
+        return newBalance;
+    }
+
+    public void setNewBalance(int newBalance) {
+        this.newBalance = newBalance;
+    }
 
     public Transaction() {
     }

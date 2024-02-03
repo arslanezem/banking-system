@@ -76,6 +76,7 @@ public class DatabaseInitializer {
                     "(id INT AUTO_INCREMENT PRIMARY KEY, " +
                     "transactionType VARCHAR(255), " +
                     "amount INT, " +
+                    "newBalance INT, " +
                     "accountNumber INT, " +
                     "timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                     "FOREIGN KEY (accountNumber) REFERENCES ACCOUNT(accountNumber))");
@@ -106,9 +107,14 @@ public class DatabaseInitializer {
             statement.executeUpdate("INSERT INTO ACCOUNT (accountNumber, balance) VALUES (456, 500)");
 
             // Inserting Transactions for corresponding accounts
-            statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', 500, 123)");
-            statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('WITHDRAWAL', 200, 123)");
-        }catch (SQLException e) {
+            statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber, newBalance) VALUES ('DEPOSIT', 500, 123, 1500)");
+            statement.executeUpdate("INSERT INTO TRANSACTION (transactionType, amount, accountNumber, newBalance) VALUES ('WITHDRAWAL', 200, 123, 1300)");
+
+            // Updating John's balance after the transactions
+            statement.executeUpdate("UPDATE ACCOUNT SET balance = 1300 WHERE accountNumber = 123");
+
+
+        } catch (SQLException e) {
             System.err.println("Error inserting sample data: " + e.getMessage());
             throw e;
         }

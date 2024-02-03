@@ -104,6 +104,7 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
                     System.out.println("Time: " + transaction.getTimestamp().format(DateTimeFormatter.ofPattern("dd/MM/yyyy, 'at' HH:mm")));
                     System.out.println("Type: " + transaction.getType());
                     System.out.println("Amount: " + transaction.getAmount() + " Euros");
+                    System.out.println("Balance after transaction: " + transaction.getNewBalance() + " Euros");
                     System.out.println("--------------------------------------------");
                 }
                 System.out.println("");

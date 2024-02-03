@@ -132,6 +132,7 @@ public class TransactionService {
                     int transactionId = resultSet.getInt("id");
                     String transactionType = resultSet.getString("transactionType");
                     double amount = resultSet.getDouble("amount");
+                    int newBalance = resultSet.getInt("newBalance");
                     Timestamp timestamp = resultSet.getTimestamp("timestamp");
 
                     LocalDateTime localDateTime = timestamp.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -141,9 +142,9 @@ public class TransactionService {
                     transaction.setType(transactionType);
                     transaction.setAmount(amount);
                     transaction.setTimestamp(localDateTime);
+                    transaction.setNewBalance(newBalance);
 
                     transactionHistory.add(transaction);
-
          }
             }
         } catch (SQLException e) {
@@ -164,7 +165,7 @@ public class TransactionService {
              PreparedStatement clientStatement = connection.prepareStatement(
                      "SELECT * FROM CLIENT WHERE accountNumber = ?");
              PreparedStatement withdrawalStatement = connection.prepareStatement(
-                     "INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('WITHDRAWAL', ?, ?)");
+                     "INSERT INTO TRANSACTION (transactionType, amount, accountNumber, newBalance) VALUES ('WITHDRAWAL', ?, ?, ?)");
              PreparedStatement updateBalanceStatement = connection.prepareStatement(
                      "UPDATE ACCOUNT SET balance = balance - ? WHERE accountNumber = ?")) {
 
@@ -172,10 +173,16 @@ public class TransactionService {
             clientStatement.setInt(1, accountNumber);
             try (ResultSet clientResultSet = clientStatement.executeQuery()) {
                 if (clientResultSet.next()) {
+                    // Get the old balance from the ACCOUNT table
+                    double oldBalance = getAccountBalanceByAccountNumber(accountNumber);
+
+                    // Calculate the new balance after deposit
+                    double newBalance = oldBalance - amount;
 
                     // Insert the Transaction
                     withdrawalStatement.setDouble(1, amount);
                     withdrawalStatement.setInt(2, accountNumber);
+                    withdrawalStatement.setDouble(3, newBalance);
                     withdrawalStatement.executeUpdate();
 
                     // Update Account Balance
@@ -202,7 +209,7 @@ public class TransactionService {
              PreparedStatement clientStatement = connection.prepareStatement(
                      "SELECT * FROM CLIENT WHERE accountNumber = ?");
              PreparedStatement depositStatement = connection.prepareStatement(
-                     "INSERT INTO TRANSACTION (transactionType, amount, accountNumber) VALUES ('DEPOSIT', ?, ?)");
+                     "INSERT INTO TRANSACTION (transactionType, amount, accountNumber, newBalance) VALUES ('DEPOSIT', ?, ?, ?)");
              PreparedStatement updateBalanceStatement = connection.prepareStatement(
                      "UPDATE ACCOUNT SET balance = balance + ? WHERE accountNumber = ?")) {
 
@@ -210,10 +217,16 @@ public class TransactionService {
             clientStatement.setInt(1, accountNumber);
             try (ResultSet clientResultSet = clientStatement.executeQuery()) {
                 if (clientResultSet.next()) {
+                    // Get the old balance from the ACCOUNT table
+                    double oldBalance = getAccountBalanceByAccountNumber(accountNumber);
+
+                    // Calculate the new balance after deposit
+                    double newBalance = oldBalance + amount;
 
                     // Insert the Transaction in the database
                     depositStatement.setDouble(1, amount);
                     depositStatement.setInt(2, accountNumber);
+                    depositStatement.setDouble(3, newBalance);
                     depositStatement.executeUpdate();
 
                     // Update the balance of the Account
