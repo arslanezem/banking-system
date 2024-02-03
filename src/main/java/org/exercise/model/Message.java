@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+/**
+ * Represents the message object that the application receive in the HTTP request.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Message {
     @JsonProperty("messageType")

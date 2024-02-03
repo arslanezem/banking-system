@@ -4,9 +4,19 @@ import org.exercise.model.Client;
 
 import java.sql.*;
 
+/**
+ * The DatabaseInitializer class is responsible for initializing the in-memory H2 database
+ * by creating tables and inserting sample data.
+ */
 public class DatabaseInitializer {
     private static Connection connection;
 
+    /**
+     * Gets a connection to the in-memory H2 database.
+     * If the connection is not already established, it will create a new one.
+     *
+     * @return The database connection.
+     */
     public static Connection getConnection() {
         if (connection == null) {
             try {
@@ -18,6 +28,12 @@ public class DatabaseInitializer {
         return connection;
     }
 
+    /**
+     * Initializes the in-memory H2 database by creating tables and inserting sample data.
+     *
+     * @return The initialized database connection.
+     * @throws SQLException If an SQL exception occurs during database initialization.
+     */
     public static Connection initializeDatabase() {
         try (Statement statement = getConnection().createStatement()) {
             createTables(statement);
@@ -29,6 +45,14 @@ public class DatabaseInitializer {
         }
     }
 
+    /**
+     * Creates three tables in the database: CLIENT, ACCOUNT, and TRANSACTION.
+     * The CLIENT table stores client information, ACCOUNT table stores account details,
+     * and TRANSACTION table records transaction history.
+     *
+     * @param statement The SQL statement to execute.
+     * @throws SQLException If an SQL exception occurs during table creation.
+     */
     private static void createTables(Statement statement) throws SQLException {
         try {
             // Create Client table
@@ -61,6 +85,12 @@ public class DatabaseInitializer {
         }
     }
 
+    /**
+     * Inserts sample data into the CLIENT, ACCOUNT, and TRANSACTION tables for testing purposes.
+     *
+     * @param statement The SQL statement to execute.
+     * @throws SQLException If an SQL exception occurs during data insertion.
+     */
     private static void insertSampleData(Statement statement) throws SQLException {
         try {
             // Insertion de clients

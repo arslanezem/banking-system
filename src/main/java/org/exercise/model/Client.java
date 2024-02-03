@@ -1,5 +1,8 @@
 package org.exercise.model;
 
+/**
+ * Represents a bank's client.
+ */
 public class Client {
     private int accountNumber;
     private String firstName;

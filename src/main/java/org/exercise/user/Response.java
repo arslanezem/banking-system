@@ -3,6 +3,10 @@ package org.exercise.user;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Response class representing the object received from the banking server.
+ * Contains information such as transaction history, status, message type, account number, amount, and balance.
+ */
 public class Response {
     private final String transactionHistory;
     private final String status;

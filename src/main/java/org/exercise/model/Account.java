@@ -3,6 +3,9 @@ package org.exercise.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a bank account.
+ */
 public class Account {
     private int accountNumber;
     private double balance;

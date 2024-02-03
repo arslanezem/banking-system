@@ -7,6 +7,10 @@ import org.exercise.parsers.JsonParser;
 import org.exercise.handlers.interfaces.WithdrawalRequestHandler;
 import org.exercise.service.TransactionService;
 
+/**
+ * Implementation of the {@link WithdrawalRequestHandler} interface for handling withdrawal requests.
+ * This class provides the logic for processing withdrawal requests and generating appropriate responses.
+ */
 public class WithdrawalRequestHandlerImpl implements WithdrawalRequestHandler {
     @Override
     public String handleRequest(Message m) {
@@ -21,7 +25,7 @@ public class WithdrawalRequestHandlerImpl implements WithdrawalRequestHandler {
             double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
             if (amount > 0) {
                 if (balance >= amount) {
-                    ts.processWithdrawalNew(accountNumber, amount);
+                    ts.processWithdrawal(accountNumber, amount);
                     double newBalance = ts.getAccountBalanceByAccountNumber(accountNumber);
                     responseMessage.setAccountNumber(accountNumber);
                     responseMessage.setMessageType("WITHDRAW_SUCCESS");
@@ -62,6 +66,11 @@ public class WithdrawalRequestHandlerImpl implements WithdrawalRequestHandler {
         return response;
     }
 
+    /**
+     * Prints the details of the withdrawal response to the console.
+     *
+     * @param m The {@link Message} representing the deposit response.
+     */
     @Override
     public void printResponse(Message m) {
         System.out.println("Withdrawal Request:");

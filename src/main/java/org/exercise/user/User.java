@@ -14,6 +14,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * User interface class for banking operations.
+ * Allows the user to input account number, amount, and choose an action (Deposit, Withdraw, Balance, History).
+ * Sends HTTP requests to the banking server based on user actions and displays the server's response.
+ * Used only for testing purposes.
+ */
 public class User extends JFrame {
 
     private JTextField accountNumberField;
@@ -89,6 +95,12 @@ public class User extends JFrame {
         add(mainPanel);
     }
 
+    /**
+     * Sends an HTTP request to the banking server based on the specified action.
+     * Updates the JTextArea with the server's response.
+     *
+     * @param action The action to perform (Deposit, Withdraw, Balance, History).
+     */
     private void sendRequest(String action) {
         String accountNumber = accountNumberField.getText();
         String amount = amountField.getText();
@@ -99,6 +111,11 @@ public class User extends JFrame {
         responseArea.setText(response);
     }
 
+    /**
+     * Entry point for the User interface application.
+     *
+     * @param args Command line arguments (not used).
+     */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -108,6 +125,15 @@ public class User extends JFrame {
         });
     }
 
+    /**
+     * Sends an HTTP POST request to the banking server with the specified parameters.
+     * Converts the server response into a formatted string for display.
+     *
+     * @param action        The action to perform (Deposit, Withdraw, Balance, History).
+     * @param accountNumber The account number.
+     * @param amount        The amount for deposit/withdrawal.
+     * @return A formatted string representing the server's response.
+     */
     private String sendHttpRequest(String action, String accountNumber, String amount) {
         try {
             String urlString = "http://localhost:9090/api/request";
@@ -148,6 +174,12 @@ public class User extends JFrame {
         }
     }
 
+    /**
+     * Constructs a formatted string based on the server response object.
+     *
+     * @param r The server response object.
+     * @return A formatted string representing the server's response.
+     */
     private String constructStringText(Response r) {
         switch (r.getMessageType()) {
             case "DEPOSIT_SUCCESS":
@@ -169,6 +201,13 @@ public class User extends JFrame {
         }
     }
 
+    /**
+     * Parses a JSON string into a JsonNode.
+     *
+     * @param jsonString The JSON string to parse.
+     * @return The parsed JsonNode.
+     * @throws RuntimeException If an error occurs while parsing JSON.
+     */
     public static JsonNode parseJson(String jsonString) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();

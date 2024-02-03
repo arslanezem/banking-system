@@ -10,8 +10,20 @@ import org.exercise.service.TransactionService;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Implementation of the {@link HistoryRequestHandler} interface for handling transaction history requests.
+ * This class provides the logic for processing history requests and generating appropriate responses.
+ */
 public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
     static List<Transaction> transactionHistory;
+
+    /**
+     * Handles a transaction history request and generates an appropriate response.
+     *
+     * @param m The {@link Message} representing the history request.
+     * @return The JSON-formatted response message.
+     * @throws RuntimeException If there is an error during JSON conversion.
+     */
     @Override
     public String handleRequest(Message m) {
         TransactionService ts = TransactionService.getInstance();
@@ -20,17 +32,20 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
         Message responseMessage = new Message();
         int accountNumber = m.getAccountNumber();
 
+        // Check if the account exists
         if (ts.accountExists(accountNumber)) {
+            // Get transaction history and balance
             transactionHistory = ts.getTransactionHistory(accountNumber);
-
             double balance = ts.getAccountBalanceByAccountNumber(accountNumber);
 
+            // Set response details
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("HISTORY_SUCCESS");
             responseMessage.setBalance(balance);
             responseMessage.setStatus(transactionHistory.size() + " transactions found.");
             responseMessage.setTransactionHistory(transactionHistory.toString());
         } else {
+            // Set response details for unknown account number
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("HISTORY_FAIL");
             responseMessage.setBalance(0);
@@ -46,11 +61,17 @@ public class HistoryRequestHandlerImpl implements HistoryRequestHandler {
             throw new RuntimeException("Error during JSON conversion", e);
         }
 
+        // Convert Object Message to JSON
         printResponse(responseMessage);
 
         return response;
     }
 
+    /**
+     * Prints the details of the transaction history response to the console.
+     *
+     * @param m The {@link Message} representing the transaction history response.
+     */
     @Override
     public void printResponse(Message m) {
         System.out.println("Transaction History:");

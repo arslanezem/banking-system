@@ -6,7 +6,19 @@ import org.exercise.parsers.JsonParser;
 import org.exercise.handlers.interfaces.DepositRequestHandler;
 import org.exercise.service.TransactionService;
 
+/**
+ * Implementation of the {@link DepositRequestHandler} interface for handling deposit requests.
+ * This class provides the logic for processing deposit requests and generating appropriate responses.
+ */
 public class DepositRequestHandlerImpl implements DepositRequestHandler {
+
+    /**
+     * Handles a deposit request and generates an appropriate response.
+     *
+     * @param m The {@link Message} representing the deposit request.
+     * @return The JSON-formatted response message.
+     * @throws RuntimeException If there is an error during JSON conversion.
+     */
     @Override
     public String handleRequest(Message m) {
         TransactionService ts = TransactionService.getInstance();
@@ -16,11 +28,15 @@ public class DepositRequestHandlerImpl implements DepositRequestHandler {
         int accountNumber = m.getAccountNumber();
         double depositAmount = m.getAmount();
 
+        // Check if the account exists
         if (ts.accountExists(accountNumber)) {
+            // Process the deposit (database)
             ts.processDeposit(accountNumber, depositAmount);
 
+            // Get the new balance
             double newBalance = ts.getAccountBalanceByAccountNumber(accountNumber);
 
+            // Set response details
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("DEPOSIT_SUCCESS");
             responseMessage.setBalance(newBalance);
@@ -28,6 +44,7 @@ public class DepositRequestHandlerImpl implements DepositRequestHandler {
             responseMessage.setStatus("Deposit Request successful.");
 
         } else {
+            // Set response details for unknown account number
             responseMessage.setAccountNumber(accountNumber);
             responseMessage.setMessageType("DEPOSIT_FAIL");
             responseMessage.setBalance(0);
@@ -43,11 +60,17 @@ public class DepositRequestHandlerImpl implements DepositRequestHandler {
             throw new RuntimeException("Error during JSON conversion", e);
         }
 
+        // Print the response details
         printResponse(responseMessage);
 
         return response;
     }
 
+    /**
+     * Prints the details of the deposit response to the console.
+     *
+     * @param m The {@link Message} representing the deposit response.
+     */
     @Override
     public void printResponse(Message m) {
         System.out.println("Deposit Request:");

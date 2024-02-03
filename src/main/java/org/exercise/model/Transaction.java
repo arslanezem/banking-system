@@ -2,6 +2,9 @@ package org.exercise.model;
 
 import java.time.LocalDateTime;
 
+/**
+ * Represents a transaction done by a client.
+ */
 public class Transaction {
     private int id;
     private LocalDateTime timestamp;

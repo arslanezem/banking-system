@@ -9,7 +9,11 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Service class responsible for handling transactions and interacting with the database.
+ * It provides methods for checking account existence, retrieving client details, getting account balance,
+ * retrieving transaction history, and processing withdrawal and deposit transactions.
+ */
 public class TransactionService {
 
     private static TransactionService instance;
@@ -18,7 +22,11 @@ public class TransactionService {
     private TransactionService() {
     }
 
-    // Method to get the single instance of TransactionService
+    /**
+     * Gets the single instance of TransactionService using lazy initialization.
+     *
+     * @return The instance of TransactionService.
+     */
     public static synchronized TransactionService getInstance() {
         if (instance == null) {
             instance = new TransactionService();
@@ -26,6 +34,12 @@ public class TransactionService {
         return instance;
     }
 
+    /**
+     * Checks if an account with the given account number exists in the database.
+     *
+     * @param accountNumber The account number to check.
+     * @return true if the account exists, false otherwise.
+     */
     public static boolean accountExists(int accountNumber) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement statement = connection.prepareStatement(
@@ -40,12 +54,16 @@ public class TransactionService {
             }
         } catch (SQLException e) {
             handleSQLException("Error checking account existence", e);
-
         }
-
         return false;
     }
 
+    /**
+     * Retrieves the client details for the given account number.
+     *
+     * @param accountNumber The account number to retrieve client details for.
+     * @return The Client object representing the client details, or null if not found.
+     */
     public Client getClientByAccountNumber(int accountNumber) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement statement = connection.prepareStatement(
@@ -66,10 +84,15 @@ public class TransactionService {
         } catch (SQLException e) {
             handleSQLException("Error getting client by account number", e);
         }
-
         return null;
     }
 
+    /**
+     * Retrieves the account balance for the given account number.
+     *
+     * @param accountNumber The account number to retrieve the balance for.
+     * @return The account balance, or 0.0 if not found or an error occurs.
+     */
     public static double getAccountBalanceByAccountNumber(int accountNumber) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password")) {
             String query = "SELECT balance FROM Account WHERE accountNumber = ?";
@@ -85,11 +108,16 @@ public class TransactionService {
         } catch (SQLException e) {
             handleSQLException("Error getting account balance", e);
         }
-
         // Return 0.0 if the account is not found or an error has occurred
         return 0.0;
     }
 
+    /**
+     * Retrieves the transaction history for the given account number.
+     *
+     * @param accountNumber The account number to retrieve the transaction history for.
+     * @return A list of Transaction objects representing the transaction history.
+     */
     public static List<Transaction> getTransactionHistory(int accountNumber) {
         List<Transaction> transactionHistory = new ArrayList<>();
 
@@ -125,7 +153,13 @@ public class TransactionService {
         return transactionHistory;
     }
 
-    public static void processWithdrawalNew(int accountNumber, double amount) {
+    /**
+     * Processes a withdrawal transaction for the specified account number and amount.
+     *
+     * @param accountNumber The account number for the withdrawal.
+     * @param amount        The amount to withdraw.
+     */
+    public static void processWithdrawal(int accountNumber, double amount) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement clientStatement = connection.prepareStatement(
                      "SELECT * FROM CLIENT WHERE accountNumber = ?");
@@ -157,6 +191,12 @@ public class TransactionService {
         }
     }
 
+    /**
+     * Processes a deposit transaction for the specified account number and amount.
+     *
+     * @param accountNumber The account number for the deposit.
+     * @param amount        The amount to deposit.
+     */
     public static void processDeposit(int accountNumber, double amount) {
         try (Connection connection = DriverManager.getConnection("jdbc:h2:mem:testdb", "sa", "password");
              PreparedStatement clientStatement = connection.prepareStatement(
@@ -188,6 +228,12 @@ public class TransactionService {
         }
     }
 
+    /**
+     * Handles SQLException by printing an error message and throwing a RuntimeException.
+     *
+     * @param message The error message.
+     * @param e       The SQLException.
+     */
     private static void handleSQLException(String message, SQLException e) {
         System.err.println(message + ": " + e.getMessage());
         throw new RuntimeException(message, e);
