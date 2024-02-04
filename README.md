@@ -59,18 +59,25 @@ The project consists of several packages:
 <h3>Handlers</h3>
 <li><b>RequestHandler:</b> Handles HTTP requests for deposit, withdrawal, balance, and history retrieval.</li>
 <li><b>WithdrawalRequestHandlerImpl:</b> Implements the withdrawal request handling logic.</li>
+<li><b>BalanceRequestHandlerImpl:</b> Implements the logic for handling balance inquiry requests.</li>
+<li><b>HistoryRequestHandlerImpl:</b> Implements the logic for handling transaction history retrieval requests.</li>
+<li><b>DepositRequestHandlerImpl:</b> Implements the logic for handling deposit requests.</li>
+
+
 
 <h3>Model</h3>
 <li><b>Account:</b> Represents a bank account with an account number, balance, and transaction history.</li>
-<li><b>Client:</b> Represents a client with basic information and an associated account.
-</li>
+<li><b>Client:</b> Represents a client with basic information and an associated account.</li>
+<li><b>Transaction:</b> Represents a financial transaction, including details such as transaction ID, type (e.g., deposit, withdrawal), amount, timestamp, and new balance after the transaction. Instances of this class are used to record and represent individual transactions within an account.</li>
+<li><b>Message:</b> represents a standardized format for communication between different components or systems within your banking application. Its primary purpose is to encapsulate information in a consistent and structured manner, facilitating the exchange of data.</li>
+
 <h3>Parsers</h3>
 <li><b>JsonParser: </b> Provides methods for converting objects to JSON and vice versa.</li>
 <h3>Server</h3>
 <li><b>BankingServer: </b> Initializes and starts the HTTP server on port 9090.</li>
 <h3>Service</h3>
-<li><b>DatabaseInitializer: </b>Initializes the H2 in-memory database with tables and sample data.</li>
-<li>TransactionService: <b></b>Provides services for handling transactions, checking account existence, retrieving client details, and more.</li>
+<li><b>DatabaseInitializer:</b> Initializes the H2 in-memory database with tables and sample data.</li>
+<li><b>TransactionService:</b> Provides services for handling transactions, checking account existence, retrieving client details, and more.</li>
 <br>
 
 
